@@ -12,13 +12,31 @@ struct ContentView: View {
                 .font(.caption)
                 .foregroundColor(.secondary)
 
-            Button(action: { player.togglePlayPause() }) {
-                Image(systemName: player.isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                    .font(.system(size: 40))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundColor(.accentColor)
+            HStack(spacing: 16) {
+                Button(action: { player.skip(by: -15) }) {
+                    Image(systemName: "gobackward.15")
+                        .font(.system(size: 20))
+                        .foregroundColor(.accentColor)
+                }
+                .buttonStyle(.plain)
+                .disabled(!player.isPlaying)
+
+                Button(action: { player.togglePlayPause() }) {
+                    Image(systemName: player.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                        .font(.system(size: 40))
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundColor(.accentColor)
+                }
+                .buttonStyle(.plain)
+
+                Button(action: { player.skip(by: 15) }) {
+                    Image(systemName: "goforward.15")
+                        .font(.system(size: 20))
+                        .foregroundColor(.accentColor)
+                }
+                .buttonStyle(.plain)
+                .disabled(!player.isPlaying)
             }
-            .buttonStyle(.plain)
 
             statusView
 

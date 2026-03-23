@@ -83,6 +83,17 @@ class RadioPlayer: ObservableObject {
         }
     }
 
+    func skip(by seconds: Double) {
+        guard isPlaying, let item = player.currentItem else { return }
+        let current = player.currentTime()
+        let seekable = item.seekableTimeRanges.last?.timeRangeValue
+        let target = CMTimeAdd(current, CMTimeMakeWithSeconds(seconds, preferredTimescale: 600))
+        if let range = seekable {
+            let clamped = CMTimeClampToRange(target, range: range)
+            player.seek(to: clamped)
+        }
+    }
+
     private func loadAndPlay() {
         let item = AVPlayerItem(url: Self.streamURL)
 
@@ -122,6 +133,17 @@ class RadioPlayer: ObservableObject {
             return .success
         }
 
+        commandCenter.skipForwardCommand.preferredIntervals = [15]
+        commandCenter.skipForwardCommand.addTarget { [weak self] _ in
+            self?.skip(by: 15)
+            return .success
+        }
+
+        commandCenter.skipBackwardCommand.preferredIntervals = [15]
+        commandCenter.skipBackwardCommand.addTarget { [weak self] _ in
+            self?.skip(by: -15)
+            return .success
+        }
     }
 
     private func updateNowPlaying() {
